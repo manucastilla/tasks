@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from tasks.serializer import TaskSerializer
+from tasks.models import Task 
+from rest_framework import generics
 
 
-# Create your views here.
+def getList(request):
+    return HttpResponse('Hello, welcome to the index page.')
 
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the tasks index.")
+def individual_post(request):
+    return HttpResponse('Hi, this is where an individual post will be.')
