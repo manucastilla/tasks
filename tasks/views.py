@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse,Http404
 from tasks.serializer import TaskSerializer
 from tasks.models import Task 
 from rest_framework import generics
@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
+from django.forms.models import model_to_dict
 
 
 @api_view(["GET"])
@@ -32,11 +33,14 @@ def updateTask(request, pk):
         task = Task.objects.get(pk = pk)
     except Task.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = TaskSerializer(task, data=request.data)
+    
+    data = JSONParser().parse(request)
+    serializer = TaskSerializer(task, data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        return JsonResponse(serializer.data, status = 201)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["DELETE"])
 def delete_all(request):
